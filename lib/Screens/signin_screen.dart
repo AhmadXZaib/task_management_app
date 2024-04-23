@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:task_management_app/Core/DB_Helper/dp_helper.dart';
 import 'package:task_management_app/Core/utils/app_colors.dart';
+import 'package:task_management_app/Screens/home_screen.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key});
@@ -10,7 +12,9 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  bool _isObscure = true; // Declare _isObscure here
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  bool _isObscure = true; // Initialize _isObscure here
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +57,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 ),
                 const SizedBox(height: 10),
                 TextFormField(
+                  controller: emailController,
                   decoration: InputDecoration(
                     fillColor: const Color(0xff455A64),
                     filled: true,
@@ -88,6 +93,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   height: 10.h,
                 ),
                 TextFormField(
+                  controller: passwordController,
                   obscureText: _isObscure,
                   decoration: InputDecoration(
                     fillColor: const Color(0xff455A64),
@@ -136,13 +142,33 @@ class _SignInScreenState extends State<SignInScreen> {
                     color: AppColors.main,
                     // borderRadius: BorderRadius.circular(30),
                   ),
-                  child: const Center(
-                    child: Text(
-                      "Let's Start",
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      // Attempt to login using provided credentials
+                      bool loggedIn = await DBHelper().logIn(
+                        email: emailController.text,
+                        password: passwordController.text,
+                        context,
+                      );
+
+                      // If login was successful, navigate to home page
+                      if (loggedIn) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const HomeScreen(),
+                          ),
+                        );
+                      } else {
+                        // Show SnackBar with error message
+                        _showSnackBar('Incorrect email or password.');
+                      }
+                    },
+                    child: const Text(
+                      "Login",
                       style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
+                        fontSize: 20,
+                      ),
                     ),
                   ),
                 ),
@@ -178,14 +204,19 @@ class _SignInScreenState extends State<SignInScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       'Don’t have an account?',
                       style:
                           TextStyle(color: AppColors.lightBlue, fontSize: 16),
                     ),
                     TextButton(
-                        onPressed: () {},
-                        child: Text(
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HomeScreen()));
+                        },
+                        child: const Text(
                           'Sign Up',
                           style: TextStyle(color: AppColors.main, fontSize: 16),
                         ))
@@ -197,5 +228,12 @@ class _SignInScreenState extends State<SignInScreen> {
         ),
       ),
     );
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      duration: const Duration(seconds: 2),
+    ));
   }
 }

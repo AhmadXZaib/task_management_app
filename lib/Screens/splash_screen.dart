@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:task_management_app/Core/utils/app_colors.dart';
-import 'package:task_management_app/Screens/signin_screen.dart';
+import 'package:task_management_app/Screens/create_accont_screen.dart';
+import 'package:task_management_app/Screens/home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -22,6 +23,9 @@ class _SplashScreenState extends State<SplashScreen>
 
   late AnimationController _containerController;
   late Animation<double> _containerScaleAnimation;
+
+  // Simulated authentication status
+  bool isAuthenticated = false;
 
   @override
   void initState() {
@@ -76,6 +80,41 @@ class _SplashScreenState extends State<SplashScreen>
     _image2Controller.forward();
     _textController.forward();
     _containerController.forward();
+
+    // Simulate checking authentication status
+    _checkAuthentication();
+  }
+
+  void _checkAuthentication() {
+    // Simulate checking user authentication status
+    // Set isAuthenticated to true if user is authenticated
+    // Replace this logic with your actual authentication logic
+    // For demo purposes, we'll assume the user is not authenticated initially
+    Future.delayed(const Duration(seconds: 3), () {
+      setState(() {
+        isAuthenticated = true;
+      });
+      _navigateToScreen();
+    });
+  }
+
+  void _navigateToScreen() {
+    // Navigate to home screen if user is authenticated, otherwise navigate to create account screen
+    if (isAuthenticated) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const HomeScreen(),
+        ),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const CreateAccountScreen(),
+        ),
+      );
+    }
   }
 
   @override
@@ -83,75 +122,70 @@ class _SplashScreenState extends State<SplashScreen>
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(left: 20, top: 15),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              FadeTransition(
-                opacity: _image1OpacityAnimation,
-                child: Image.asset(
-                  'assets/images/group.png',
-                  height: 62,
-                  width: 93,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 20, top: 15, bottom: 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FadeTransition(
+                  opacity: _image1OpacityAnimation,
+                  child: Image.asset(
+                    'assets/images/group.png',
+                    height: 62,
+                    width: 93,
+                  ),
                 ),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              FadeTransition(
-                opacity: _image2OpacityAnimation,
-                child: Image.asset(
-                  'assets/images/splash.png',
-                  height: 330,
-                  width: 369,
+                const SizedBox(height: 20),
+                FadeTransition(
+                  opacity: _image2OpacityAnimation,
+                  child: Image.asset(
+                    'assets/images/splash.png',
+                    height: 330,
+                    width: 369,
+                  ),
                 ),
-              ),
-              const SizedBox(
-                height: 40,
-              ),
-              FadeTransition(
+                const SizedBox(height: 40),
+                FadeTransition(
                   opacity: _textOpacityAnimation,
                   child: Image.asset(
                     'assets/images/manage.png',
                     height: 230,
                     width: 376,
-                  )),
-              const SizedBox(
-                height: 30,
-              ),
-              ScaleTransition(
-                scale: _containerScaleAnimation,
-                child: Center(
-                  child: Container(
-                    height: 60,
-                    width: 276,
-                    decoration: BoxDecoration(
-                      color: AppColors.main,
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    child: Center(
-                      child: TextButton(
+                  ),
+                ),
+                const SizedBox(height: 30),
+                ScaleTransition(
+                  scale: _containerScaleAnimation,
+                  child: Center(
+                    child: Container(
+                      height: 60,
+                      width: 276,
+                      decoration: BoxDecoration(
+                        color: AppColors.main,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Center(
+                        child: TextButton(
                           onPressed: () {
-                            Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const SignInScreen()));
+                            _navigateToScreen();
                           },
                           child: const Text(
                             "Let's Start",
                             style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black),
-                          )),
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

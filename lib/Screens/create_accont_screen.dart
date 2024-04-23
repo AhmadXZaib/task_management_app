@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:task_management_app/Core/DB_Helper/dp_helper.dart';
 import 'package:task_management_app/Core/utils/app_colors.dart';
+import 'package:task_management_app/Screens/home_screen.dart';
+import 'package:task_management_app/Screens/signin_screen.dart';
 
 class CreateAccountScreen extends StatefulWidget {
   const CreateAccountScreen({super.key});
@@ -12,7 +15,11 @@ class CreateAccountScreen extends StatefulWidget {
 class _CreateAccountScreenState extends State<CreateAccountScreen> {
   @override
   Widget build(BuildContext context) {
-    bool _isObscure = true;
+    final nameController = TextEditingController();
+    final emailController = TextEditingController();
+    final passwordController = TextEditingController();
+    bool isObscure = true;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
@@ -46,6 +53,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 ),
                 const SizedBox(height: 10),
                 TextFormField(
+                  controller: nameController,
                   decoration: InputDecoration(
                     fillColor: const Color(0xff455A64),
                     filled: true,
@@ -64,8 +72,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     ),
                   ),
                   style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16), // Set text color to white here
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
                 ),
                 const SizedBox(height: 10),
                 const Text(
@@ -74,6 +83,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                 ),
                 const SizedBox(height: 10),
                 TextFormField(
+                  controller: emailController,
                   decoration: InputDecoration(
                     fillColor: const Color(0xff455A64),
                     filled: true,
@@ -92,11 +102,9 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     ),
                   ),
                   style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16), // Set text color to white here
-                ),
-                SizedBox(
-                  height: 10.h,
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
                 ),
                 SizedBox(
                   height: 10.h,
@@ -109,24 +117,28 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   height: 10.h,
                 ),
                 TextFormField(
-                  obscureText: _isObscure,
+                  controller: passwordController,
+                  obscureText: isObscure,
                   decoration: InputDecoration(
                     fillColor: const Color(0xff455A64),
                     filled: true,
                     hintText: 'Enter your password',
                     hintStyle:
                         const TextStyle(color: Colors.white, fontSize: 20),
-                    prefixIcon:
-                        const Icon(Icons.lock, color: Colors.white, size: 25),
+                    prefixIcon: const Icon(
+                      Icons.lock,
+                      color: Colors.white,
+                      size: 25,
+                    ),
                     suffixIcon: IconButton(
                       onPressed: () {
                         setState(() {
-                          _isObscure = !_isObscure;
+                          isObscure = !isObscure;
                         });
                       },
                       icon: Icon(
-                        _isObscure ? Icons.visibility : Icons.visibility_off,
-                        color: Colors.white, // Setting the color explicitly
+                        isObscure ? Icons.visibility : Icons.visibility_off,
+                        color: Colors.white,
                       ),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
@@ -135,7 +147,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  style: const TextStyle(color: Colors.white, fontSize: 16),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                  ),
                 ),
                 SizedBox(
                   height: 8.h,
@@ -155,7 +170,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     ),
                     const Text(
                       ' Privacy Policy,',
-                      style: TextStyle(color: AppColors.main, fontSize: 16),
+                      style: TextStyle(
+                        color: AppColors.main,
+                        fontSize: 16,
+                      ),
                     ),
                   ],
                 ),
@@ -174,15 +192,42 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   width: 376,
                   decoration: const BoxDecoration(
                     color: AppColors.main,
-                    // borderRadius: BorderRadius.circular(30),
                   ),
-                  child: const Center(
-                    child: Text(
-                      "Let's Start",
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
+                  child: Center(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        String name = nameController.text;
+                        String email = emailController.text;
+                        String password = passwordController.text;
+
+                        if (name.isEmpty) {
+                          _showErrorMessage(context, "Enter Name");
+                        } else if (email.isEmpty) {
+                          _showErrorMessage(context, "Enter Email");
+                        } else if (password.isEmpty) {
+                          _showErrorMessage(context, "Enter Password");
+                        } else {
+                          DBHelper().registerUser(
+                            context,
+                            name: name,
+                            email: email,
+                            password: password,
+                            contex: context,
+                            confirmpassword: '',
+                          );
+
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HomeScreen()));
+                        }
+                      },
+                      child: const Text(
+                        "Sign Up",
+                        style: TextStyle(
+                          fontSize: 20,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -193,22 +238,21 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   height: 60,
                   width: 376,
                   decoration: const BoxDecoration(
-                      border: Border(
-                    bottom: BorderSide(color: AppColors.white),
-                    left: BorderSide(color: AppColors.white),
-                    right: BorderSide(color: AppColors.white),
-                    top: BorderSide(color: AppColors.white),
-                  )
-                      // color: AppColors.main,
-                      // borderRadius: BorderRadius.circular(30),
-                      ),
+                    border: Border(
+                      bottom: BorderSide(color: AppColors.white),
+                      left: BorderSide(color: AppColors.white),
+                      right: BorderSide(color: AppColors.white),
+                      top: BorderSide(color: AppColors.white),
+                    ),
+                  ),
                   child: const Center(
                     child: Text(
                       "Google",
                       style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.white),
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.white,
+                      ),
                     ),
                   ),
                 ),
@@ -224,18 +268,31 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                           TextStyle(color: AppColors.lightBlue, fontSize: 16),
                     ),
                     TextButton(
-                        onPressed: () {},
-                        child: const Text(
-                          'Log In',
-                          style: TextStyle(color: AppColors.main, fontSize: 16),
-                        ))
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const SignInScreen()));
+                      },
+                      child: const Text(
+                        'Log In',
+                        style: TextStyle(color: AppColors.main, fontSize: 16),
+                      ),
+                    ),
                   ],
-                )
+                ),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  void _showErrorMessage(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      duration: const Duration(seconds: 2),
+    ));
   }
 }
