@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -377,7 +375,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         radius: 45.0,
                                         lineWidth: 5.0,
                                         percent: 0.8,
-                                        center: Text(
+                                        center: const Text(
                                           '60%',
                                           style: TextStyle(
                                               color: AppColors.white,

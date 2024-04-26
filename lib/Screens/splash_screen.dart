@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:task_management_app/Core/utils/app_colors.dart';
 import 'package:task_management_app/Screens/create_accont_screen.dart';
 import 'package:task_management_app/Screens/home_screen.dart';
+import 'package:task_management_app/Screens/main_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -104,7 +105,7 @@ class _SplashScreenState extends State<SplashScreen>
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
+          builder: (context) => const MainScreen(),
         ),
       );
     } else {
